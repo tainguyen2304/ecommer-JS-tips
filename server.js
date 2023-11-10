@@ -1,10 +1,11 @@
-const { notify } = require("./src/app");
 const app = require("./src/app");
 
-const PORT = 2000;
+const {
+  app: { port },
+} = require("./src/configs/config.mongdb");
 
-const server = app.listen(PORT, () => {
-  console.log(`WSV ecommmer start with 2000 ${PORT}`);
+const server = app.listen(port, () => {
+  console.log(`WSV ecommmer start with ${port}`);
 });
 
 process.on("SIGINT", () => {
