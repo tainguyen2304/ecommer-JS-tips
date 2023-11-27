@@ -38,18 +38,21 @@ class keyTokenService {
   };
 
   static findByUserId = async (userId) => {
-    return await keytokenModel.findOne({
-      user: new mongoose.Types.ObjectId(userId),
-    });
+    return await keytokenModel
+      .findOne({
+        user: new mongoose.Types.ObjectId(userId),
+      })
+      .lean();
   };
-  ư;
 
   static removeKeyById = async (id) => {
     return await keytokenModel.deleteOne({ _id: id });
   };
 
   static findByRefreshTokenUsed = async (refreshToken) => {
-    return await keytokenModel.findOne({ refreshTokenUsed: refreshToken });
+    return await keytokenModel
+      .findOne({ refreshTokenUsed: refreshToken })
+      .lean();
   };
 
   static findByRefreshToken = async (refreshToken) => {

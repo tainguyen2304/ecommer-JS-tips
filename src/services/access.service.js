@@ -35,8 +35,7 @@ class AccessService {
         refreshToken,
         foundToken.privateKey
       );
-
-      console.log(userId, email);
+      f;
 
       // xóa tất cả token trong keyStore
       await keyTokenService.deleteKeyById(userId);
@@ -76,6 +75,45 @@ class AccessService {
 
     return {
       user: { userId, email },
+      tokens,
+    };
+  };
+
+  // version 2
+  static handleRefreshTokenLV2 = async ({ keyStore, user, refreshToken }) => {
+    const { userId, email } = user;
+
+    if (keyStore.refreshTokenUsed.includes(refreshToken)) {
+      await keyTokenService.deleteKeyById(userId);
+      throw new ForbiddenError("Something wrong happend !! Pls relogin");
+    }
+
+    if (keyStore.refreshToken !== refreshToken) {
+      throw new AuthFailureError("Shop not registered 1");
+    }
+
+    const shopUser = await findByEmail({ email });
+    if (!shopUser) throw new AuthFailureError("Shop not registered 2");
+
+    // create 1 cap token moi
+    const tokens = await createTokenPair(
+      { userId, email },
+      keyStore.publicKey,
+      keyStore.privateKey
+    );
+
+    // update token
+    await keyStore.updateOne({
+      $set: {
+        refreshToken: tokens.refreshToken,
+      },
+      $addToSet: {
+        refreshTokenUsed: refreshToken, // đã dc sử dụng để lấy token mới rồi
+      },
+    });
+
+    return {
+      user,
       tokens,
     };
   };
