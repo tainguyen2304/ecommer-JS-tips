@@ -163,7 +163,7 @@ class DisscountSercvice {
     const foundDiscount = await checkDiscountExits({
       model: discountModel,
       filter: {
-        discount_code: code,
+        discount_code: codeId,
         discount_shopId: convertToObjectMongodb(shopId),
       },
     });
@@ -173,13 +173,15 @@ class DisscountSercvice {
     }
 
     const {
-      discount_is_active,
-      discount_max_uses,
-      discount_min_order_value,
-      discount_users_used,
-      discount_start_date,
-      discount_end_date,
       discout_value,
+      discount_type,
+      discount_end_date,
+      discount_max_uses,
+      discount_is_active,
+      discount_start_date,
+      discount_users_used,
+      discount_min_order_value,
+      discount_max_uses_per_user,
     } = foundDiscount;
 
     if (!discount_is_active) {
@@ -188,7 +190,6 @@ class DisscountSercvice {
     if (!discount_max_uses) {
       throw new NotFoundError("Discount are out!");
     }
-
     checkDiscountCodeHasExpried(discount_start_date, discount_end_date);
 
     // check xem có giá trị tối thiểu hay không?
@@ -199,7 +200,7 @@ class DisscountSercvice {
         return acc + product.quantity * product.price;
       }, 0);
 
-      if (!totalOrder < discount_min_order_value) {
+      if (totalOrder < discount_min_order_value) {
         throw new NotFoundError(
           `discount requires a minium order value of ${discount_min_order_value}`
         );
@@ -219,7 +220,7 @@ class DisscountSercvice {
     const amout =
       discount_type === "fixed_amount"
         ? discout_value
-        : totalOrder * discout_value;
+        : totalOrder * (discout_value / 100);
 
     return {
       totalOrder,

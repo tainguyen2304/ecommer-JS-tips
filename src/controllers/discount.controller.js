@@ -4,7 +4,7 @@ const { CREATED, SuccessResponse } = require("../core/success.response");
 const DiscountService = require("../services/discount.service");
 
 class DiscountController {
-  createDiscount = async (req, res, next) => {
+  createDiscountCode = async (req, res, next) => {
     new SuccessResponse({
       message: "Success Code generations",
       metadata: await DiscountService.createDiscountCode({

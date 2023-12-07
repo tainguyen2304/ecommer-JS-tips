@@ -44,7 +44,7 @@ const findAllDiscountCodeSelect = async ({
   return documents;
 };
 
-const checkDiscountExits = async (model, filter) => {
+const checkDiscountExits = async ({ model, filter }) => {
   return await model.findOne(filter).lean();
 };
 

@@ -18,7 +18,7 @@ router.get(
 // authentication //
 router.use(authenticationLV2);
 
-router.post("", asyncHandler(discountController.createDiscount));
+router.post("", asyncHandler(discountController.createDiscountCode));
 router.get("", asyncHandler(discountController.getAllDiscountCodes));
 
 module.exports = router;
